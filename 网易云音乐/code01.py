@@ -1,8 +1,3 @@
-'''
-    最后测试于2020.11.21
-    只限于搜索和免费
-'''
-
 import random
 import requests
 from Crypto.Cipher import AES
@@ -14,6 +9,10 @@ import re
 import urllib3
 urllib3.disable_warnings()
 
+
+'''
+ 
+'''
 
 class WangYiYun:
 
@@ -30,8 +29,8 @@ class WangYiYun:
         }
         self.key = '0CoJUm6Qyw8W8jud'
         self.iv = b'0102030405060708'
-    # 随机值
 
+    '''生成一个随机值i'''
     def get_random(self):
         str = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
         random_str = ''
@@ -40,6 +39,7 @@ class WangYiYun:
             random_str += str[index]
         return random_str
 
+    ''' aes加密处理 '''
     def aes_encrypt(self, text, key):
         pad = 16 - len(text) % 16
         text = text + chr(2) * pad
@@ -48,11 +48,13 @@ class WangYiYun:
         result_str = base64.b64encode(encryptor_str).decode()
         return result_str
 
+    ''' 拿到随机i两次加密生成params '''
     def get_params(self, text, random_str):
         first_aes = self.aes_encrypt(text, key=self.key)
         second_aes = self.aes_encrypt(first_aes, random_str)
         return second_aes
 
+    ''' 拿到随机i生成encSeckey'''
     def get_encSeckey(self, text):
         pub_key = '010001'
         modulus = '00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7'
@@ -60,39 +62,40 @@ class WangYiYun:
         result = pow(int(hexlify(text.encode()), 16), int(pub_key, 16), int(modulus, 16))
         return format(result, 'x').zfill(131)
 
+    ''' 请求网址 '''
     def get_url(self, url, params, encSeckey):
         response = requests.post(url=url,
                                  headers=self.headers,
                                  data={'params': params, 'encSecKey':encSeckey},
                                  verify=False)
         text = response.json()
-        if 'v1?csrf_token=' not in url:
-            self.parse_text(text)
-        else:
-            self.download_text(text)
+        self.parse_text(text) if 'v1?csrf_token=' not in url else  self.download_text(text)
 
+    ''' 分析数据 '''
     def parse_text(self,text):
         html = text['result']['songs']
         for index in html:
             item = {}
             item['歌名'] = index['name']
             item['ID'] = str(index['id'])
-            item['歌链接'] = 'https://music.163.com/#/song?id='+ str(index['id'])
+            item['歌链接'] = 'https://music.163.com/#/song?id=' + str(index['id'])
             text = str(index['ar'])
             item['演唱者'] = ''.join(re.findall(r"'name': '(.*?)'", text))
             print(item)
 
+    ''' 下载歌单 '''
     def download_text(self, text):
         html = str(text['data'])
         url = ''.join(re.findall(r"'url': '(.*?)'", html))
         name = input('请输入保存名字')
-        with open(f'./下载歌单/{name}.m4a','wb') as f:
+        with open('./下载歌单/'+ name + '.m4a','wb') as f:
             try:
                 response = requests.get(url, timeout=10)
             except requests.exceptions.ConnectTimeout:
                 response = requests.get(url, timeout=10)
             f.write(response.content)
 
+    ''' 搜索'''
     def search(self):
         url = 'https://music.163.com/weapi/cloudsearch/get/web?csrf_token='
         song = input('请输入搜索词\n')
@@ -103,6 +106,7 @@ class WangYiYun:
         encSeckey = self.get_encSeckey(random)
         self.get_url(url, params, encSeckey)
 
+    ''' 下载 '''
     def download(self):
         url = 'https://music.163.com/weapi/song/enhance/player/url/v1?csrf_token='
         id = input('请输入歌名id\n')
@@ -114,15 +118,15 @@ class WangYiYun:
         encSeckey = self.get_encSeckey(random)
         self.get_url(url,params, encSeckey)
 
+    ''' 随心听 '''
     def today_random(self):
         pass
 
+    ''' 启动总程序 '''
     def run(self):
         while True:
             num = input('请输入操作 1.搜索歌单 2.今日随机听 3.下载\n')
             self.today_random() if num == '2' else self.search() if num == '1' else self.download()
-
-
 
 def main():
     wangyiyun = WangYiYun()
