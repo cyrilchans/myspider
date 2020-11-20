@@ -89,7 +89,7 @@ class WangYiYun:
         html = str(text['data'])
         url = ''.join(re.findall(r"'url': '(.*?)'", html))
         name = input('请输入保存名字')
-        with open('./下载歌单/'+ name + '.m4a','wb') as f:
+        with open(f'./下载歌单/{name}.m4a','wb') as f:
             try:
                 response = requests.get(url, timeout=10)
             except requests.exceptions.ConnectTimeout:
