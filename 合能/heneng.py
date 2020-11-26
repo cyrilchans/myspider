@@ -13,7 +13,7 @@ def parse():
     }
 
     url = 'http://vendor.heneng.cn:16791/api/gwc'
-    for index in range(1,4):
+    for index in range(1, 4):
         i = str(int(time.time()*1000))
         c = '{"action":"P_SUP_Bid_GetNotice","p1":"","p2":"",' \
             f'"p3":{index},"p4":20,"p5":"","p6":"-1","p7":""}}'

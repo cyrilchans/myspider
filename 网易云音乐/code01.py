@@ -1,6 +1,6 @@
 import random
 import requests
-from Crypto.Cipher import AES
+from Crypto.Cipher import AES  # 这个pip pycryptodome
 from binascii import hexlify
 import json
 import base64
@@ -67,10 +67,10 @@ class WangYiYun:
     def get_url(self, url, params, encSeckey):
         response = requests.post(url=url,
                                  headers=self.headers,
-                                 data={'params': params, 'encSecKey':encSeckey},
+                                 data={'params': params, 'encSecKey': encSeckey},
                                  verify=False)
         text = response.json()
-        self.parse_text(text) if 'v1?csrf_token=' not in url else  self.download_text(text)
+        self.parse_text(text) if 'v1?csrf_token=' not in url else self.download_text(text)
 
     ''' 分析数据 '''
     def parse_text(self,text):
