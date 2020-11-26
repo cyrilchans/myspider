@@ -26,7 +26,7 @@ def yd(string):
         "Cookie": 'OUTFOX_SEARCH_USER_ID_NCOO=1586645183.0409322; OUTFOX_SEARCH_USER_ID="-732657987@10.169.0.102"; JSESSIONID=aaa8dN2TMu7y9cbwKPvxx; ___rl__test__cookies=1605611408897',
 
     }
-    '''根据js格式改写，模拟随机生成方式'''
+    '''模拟js加密'''
     ts = str(int(time.time() * 1000))
     salt = ts + str(random.randint(0, 9))
     sign = get_md5("fanyideskweb" + string + salt + "]BjuETDhU)zqSxf-=B#7m")
