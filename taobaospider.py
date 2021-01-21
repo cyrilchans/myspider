@@ -29,10 +29,10 @@ class SapiderTaobao:
 
     def login_search_deal(self, driver):
         # 登录
-        num = '15220911253'
+        num = '输入你的登陆账号'
         for index in num:
             driver.find_element_by_xpath('//input[@placeholder="会员名/邮箱/手机号"]').send_keys(f'{index}')
-        ps = 'cyh1314520--'
+        ps = '输入你的密码'
         for indexs in ps:
             driver.find_element_by_xpath('//input[@placeholder="请输入登录密码"]').send_keys(f'{indexs}')
         driver.find_element_by_xpath('//div[@class="fm-btn"]/button').click()
